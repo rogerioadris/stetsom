@@ -13,18 +13,20 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-messaging.onMessage((payload) => {
-    console.log('Message received. ', payload);
-    // ...
-});
+messaging.requestPermission()
+    .then(function () {
+        console.log('I am in here');
 
-messaging.setBackgroundMessageHandler(function (payload) {
-    console.log('[firebase-messaging-sw.js] Received background message ', payload);
-    const notificationTitle = 'Background Message Title';
-    const notificationOptions = {
-        body: 'Background Message body.',
-        icon: '/firebase-logo.png'
-    };
+        return messaging.getToken()
+            .then(function (currentToken) {
+                console.log(currentToken);
+            })
+            .catch(function (err) {
+                console.log('An error occurred while retrieving token. ', err);
+                showToken('Error retrieving Instance ID token. ', err);
+                setTokenSentToServer(false);
+            });
 
-    return self.registration.showNotification(notificationTitle, notificationOptions);
-});
+    }).catch(function (err) {
+        console.log('Error');
+    });
