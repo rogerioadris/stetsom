@@ -24,7 +24,16 @@
         firebase.initializeApp(firebaseConfig);
 
         const messaging = firebase.messaging();
-        console.log(messaging);
+
+        messaging.getToken().then((currentToken) => {
+            if (currentToken) {
+                console.log(currentToken)
+            } else {
+                console.log('No Instance ID token available. Request permission to generate one.');
+            }
+        }).catch((err) => {
+            console.log('An error occurred while retrieving token. ', err);
+        });
     </script>
 </body>
 
